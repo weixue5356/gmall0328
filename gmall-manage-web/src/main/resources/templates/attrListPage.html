@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+  <body>
+    <table id="dg" title="属性列表" class="easyui-datagrid" style="width:100%;height:100%"
+           data-options="fitColumns:true,singleSelect:true,toolbar:'#tb'">
+        <thead>
+        <tr>
+            <th data-options="field:'id',width:100">属性id</th>
+            <th data-options="field:'attrName',width:100">属性值名称</th>
+        </tr>
+        </thead>
+    </table>
+
+    <div id="tb">
+        <a href="javascript:addAttr();" class="easyui-linkbutton" data-options="iconCls:'icon-add',plain:true">添加</a>
+        <a href="javascript:editAttr();" class="easyui-linkbutton" data-options="iconCls:'icon-edit',plain:true">编辑</a>
+        <a href="javascript:removeAttr();" class="easyui-linkbutton" data-options="iconCls:'icon-remove',plain:true">删除</a>
+        <div>
+            一级分类:<input id="ctg1ForAttrList" class="easyui-combobox" name="dept"
+                        data-options="valueField:'id',textField:'name',url:'getCatalog1',
+                        onSelect:function(rec){
+                           var url = 'getCatalog2?catalog1Id='+ rec.id;
+                           $('#ctg2ForAttrList').combobox('reload',url);
+                       }" />
+            二级分类:<input id="ctg2ForAttrList" class="easyui-combobox"
+                        data-options="valueField:'id',textField:'name',
+                         onSelect:function(rec){
+                         var url = 'getCatalog3?catalog2Id=' + rec.id;
+                         $('#ctg3ForAttrList').combobox('reload',url);
+                         }" />
+            三级分类:<input id="ctg3ForAttrList" class="easyui-combobox"
+                        data-options="valueField:'id',textField:'name'" />
+
+            <a href="javascript:reloadAttrList();" class="easyui-linkbutton" data-options="iconCls:'icon-search'">刷新属性列表</a>
+
+        </div>
+    </div>
+
+    <div th:include="attrInfoPage"></div>
+
+  <script language="JavaScript">
+     function reloadAttrList(){
+        var catalog3Id = $("#ctg3ForAttrList").combobox("getValue");
+          //alert(catalog3Id);
+         if (catalog3Id){
+             $("#dg").datagrid({
+                 url:"getAttrList?catalog3Id=" + catalog3Id
+             });
+         } else {
+             $.messager.alert('提示消息','请选择三级分类','info');
+         }
+
+
+     }
+
+     function addAttr() {
+
+          var catalog3Id = $("#ctg3ForAttrList").combobox("getValue");
+          if (catalog3Id){
+              $("#dd").dialog("open");
+              //初始化页面
+              initAttrValueDatagrid();
+          } else {
+              $.messager.alert('提示消息','请选择三级分类','info');
+
+          }
+     }
+
+     function editAttr() {
+         var catalog3Id = $("#ctg3ForAttrList").combobox("getValue");
+         if (catalog3Id) {
+
+             var baseAttrInfo = $("#dg").datagrid("getSelected");
+             if(baseAttrInfo) {
+                 $("#dd").dialog("open");
+                 initAttrValueDatagrid(baseAttrInfo);
+             }else {
+                 $.messager.alert('提示消息','请选择属性内容','info');
+
+             }
+             } else {
+             $.messager.alert('提示消息','请选择三级分类','info');
+         }
+     }
+
+
+     function removeAttr() {
+         var catalog3Id = $("#ctg3ForAttrList").combobox("getValue");
+         if (catalog3Id) {
+             //获取选中的行
+             var selectValue = $("#dg").datagrid("getSelected");
+
+             if(selectValue) {
+                 //询问是否需要删除
+                 $.messager.confirm('确认','您确认不要['+selectValue.attrName+']宝宝吗?',function(result){
+                     if (result){
+                         $("#dg").datagrid({
+                             url:"deleteAttrById?id=" + selectValue.id
+                         });
+                         reloadAttrList();
+                         //进行删除
+                         //alert('确认删除');
+                     }
+                 });
+
+
+             }else {
+                 $.messager.alert('提示消息','请选择需要删除的属性内容','info');
+
+             }
+         } else {
+             $.messager.alert('提示消息','请选择三级分类','info');
+         }
+     }
+
+  </script>
+
+  </body>
+</html>

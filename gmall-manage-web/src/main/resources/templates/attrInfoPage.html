@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+        <div id="dd" class="easyui-dialog" title="编辑属性" style="width:600px;height:500px;" closed="true"
+             data-options="iconCls:'icon-save',resizable:true,modal:true,buttons:'#bb'">
+          <label>属性名称</label>
+            <input  id="attrName" name="attrName" class="easyui-textbox" data-options="" style="width:100px"/>
+            <input  id="attrId" name="attrId" type="hidden"/>
+            <br/>
+            <table id="dg_av" class="easyui-datagrid" title="属性值列表"></table>
+
+
+        </div>
+
+
+
+        <div id="bb">
+            <a href="#" class="easyui-linkbutton" onclick="saveAttr()">保存</a>
+            <a href="#" class="easyui-linkbutton" onclick="closeAttr()">关闭</a>
+        </div>
+   <script language="JavaScript">
+       function closeAttr() {
+           $("#dd").dialog("close");
+       }
+
+       function saveAttr() {
+
+           var baseAttrInfo = {};
+
+          var attrName = $("#attrName").val();
+
+          var catalog3Id = $("#ctg3ForAttrList").combobox("getValue");
+
+           baseAttrInfo["attrName"] = attrName;
+           baseAttrInfo["catalog3Id"] = catalog3Id;
+
+           var rows = $("#dg_av").datagrid("getRows");
+
+             $(rows).each(function (i,e) {
+                 baseAttrInfo["attrValueList["+i+"].valueName"] = e.valueName;
+             });
+
+            var id = $("#attrId").val();
+
+           if (id) {
+                baseAttrInfo["id"] = id;
+                $.post("updateAttrValueList",baseAttrInfo,function (data) {
+                    alert(data);
+                    //保存属性
+                    //关闭页面
+                    $("#dd").dialog("close");
+                    //刷新到属性列表页面
+                    var url= "getAttrList?catalog3Id=" + catalog3Id
+                    $("#dg").datagrid("reload",url);
+
+                });
+           } else{
+                $.post("saveAttr",baseAttrInfo,function (data) {
+                    alert(data);
+                    //保存属性
+                    //关闭页面
+                    $("#dd").dialog("close");
+                    //刷新到属性列表页面
+                    var url= "getAttrList?catalog3Id=" + catalog3Id
+                    $("#dg").datagrid("reload",url);
+
+                });
+            }
+       }
+
+
+       function initAttrValueDatagrid(baseAttrInfo) {
+                   $("#dg_av").datagrid({
+                       singleSelect : true,
+                           columns:[[
+                               {field:'id',title:'编号',width:100},
+                               {field:'valueName',title:'属性名称',width:300,
+                                   editor:{
+                                   type:'validatebox',
+                                   options:{
+                                       required:true
+                                     }
+                                   }
+                               }
+                           ]]
+
+                       ,toolbar: [{
+                           iconCls: 'icon-add',
+                           text:'添加',
+                           handler: function(){
+                               //alert('添加')
+                           $("#dg_av").datagrid("appendRow",{
+                               id:'',
+                               valueName:''
+                           });
+
+                           }
+                       },'-',{
+                       iconCls: 'icon-remove',
+                       text:'删除',
+                       handler: function(){
+                           //alert('删除')
+                          var row = $("#dg_av").datagrid("getSelected");
+
+                          if (row){
+                              var rowNum = $("#dg_av").datagrid("getRowIndex",row);
+                              $("#dg_av").datagrid("deleteRow",rowNum);
+                          } else {
+                              $.messager.alert('提示消息','请选择需要删除的内容','info');
+                          }
+
+                             }
+                     }],
+
+                       onDblClickRow:function (rowIndex,rowDada) {
+                           $("#dg_av").datagrid("beginEdit",rowIndex);
+                              var valueName = rowDada.valueName;
+                              $("input.datagrid-editable-input").val(valueName).bind("blur",function (evt) {
+                                  $("#dg_av").datagrid("endEdit",rowIndex);
+
+                              });
+                         }
+
+
+                   });
+                       if (baseAttrInfo){
+                                 var attrId = baseAttrInfo.id;
+                         //  $("#attrId").textbox("getValue","attrId");
+                           $("#attrName").textbox("setText",baseAttrInfo.attrName);
+                           $("#dg_av").datagrid({
+                               url : "getAttrValueList?attrId=" + attrId
+                           });
+                       }
+          }
+
+   </script>
+</body>
+
+
+
+
+
+
+</html>

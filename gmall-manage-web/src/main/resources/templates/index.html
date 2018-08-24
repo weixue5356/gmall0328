@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <link rel="stylesheet" type="text/css" href="/easyui/themes/default/easyui.css">
+    <link rel="stylesheet" type="text/css" href="/easyui/themes/icon.css">
+    <link rel="stylesheet" type="text/css" href="/webuploader/webuploader.css">
+
+    <script type="text/javascript" src="/easyui/jquery.min.js"></script>
+    <script type="text/javascript" src="/easyui/jquery.easyui.min.js"></script>
+    <script type="text/javascript" src="/easyui/datagrid-detailview.js"></script>
+    <script type="text/javascript" src="/webuploader/webuploader.js"></script>
+
+
+</head>
+
+<body class="easyui-layout">
+<div data-options="region:'north',title:'头部',split:true" style="height:100px;">
+    <h1> 后台管理系统 </h1>
+</div>
+<div data-options="region:'south',title:'底部',split:true" style="height:100px;">
+    <h1>底部 </h1>
+</div>
+<div data-options="region:'west',title:'左部',split:true" style="width:200px;">
+
+    <div data-options="region:'west',title:'左部',split:true" style="width:200px;">
+        <div class="easyui-accordion" style="overflow:auto;">
+            <div title="属性信息管理">
+                <ul>
+                    <li>
+                       <a href="javascript:addAttrTabs();">属性信息管理</a>
+                    </li>
+                </ul>
+
+            </div>
+            <div title="商品spu管理">
+                <ul>
+                    <li>
+                        <a href="javascript:addSpuTabs();">商品spu管理</a>
+                    </li>
+                </ul>
+            </div>
+            <div title="商品sku">
+                <ul>
+                    <li>商品sku</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+
+</div>
+<div data-options="region:'center',title:'中部'"  >
+
+    <div id="tt" class="easyui-tabs" style="width:100%;height:100%;">
+    </div>
+
+
+</div>
+ <script language="JavaScript">
+     function addSpuTabs() {
+       var b = $("#tt").tabs("exists","商品spu管理");
+       if (!b){
+           $("#tt").tabs("add",{
+               title:"商品spu管理",
+               href:"spuListPage",
+               closable:true
+           });
+       } else{
+           $("#tt").tabs("select","商品spu管理");
+       }
+
+     }
+
+
+         function addAttrTabs() {
+             var b = $("#tt").tabs("exists","属性信息管理");
+             if (!b){
+                 $("#tt").tabs("add",{
+                     title:"属性信息管理",
+                     href:"attrListPage",
+                     closable:true
+                 });
+             } else{
+                 $("#tt").tabs("select","属性信息管理");
+             }
+
+         }
+
+
+
+
+
+ </script>
+
+</body>
+
+
+
+
+</html>
