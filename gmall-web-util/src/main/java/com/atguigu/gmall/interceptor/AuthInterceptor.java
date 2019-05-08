@@ -21,7 +21,7 @@ public class AuthInterceptor extends HandlerInterceptorAdapter {
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
         HandlerMethod method = (HandlerMethod)handler;
         LoginRequire methodAnnotation = method.getMethodAnnotation(LoginRequire.class);
-         //无需携带token 游客页面
+        //无需携带token 游客页面
         if (methodAnnotation == null) {
             return true;
         }
@@ -38,7 +38,7 @@ public class AuthInterceptor extends HandlerInterceptorAdapter {
 
       if (StringUtils.isBlank(newToken) && StringUtils.isNotBlank(oldToken)) {
           //已经登录过
-          token = oldToken;
+
       }
 
         if (StringUtils.isNotBlank(newToken) && StringUtils.isBlank(oldToken)) {
