@@ -10,6 +10,7 @@
         <module name="gmall-web-util" />
         <module name="gmall-item-web" />
         <module name="gmall-common-util" />
+        <module name="demo" />
         <module name="gmall-list-service" />
         <module name="gmall-user-provide" />
         <module name="gware-manage" />
@@ -27,5 +28,10 @@
         <module name="gmall-service-util" />
       </profile>
     </annotationProcessing>
+  </component>
+  <component name="JavacSettings">
+    <option name="ADDITIONAL_OPTIONS_OVERRIDE">
+      <module name="demo" options="-parameters" />
+    </option>
   </component>
 </project>
